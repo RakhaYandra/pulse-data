@@ -1,0 +1,41 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pulse
+          POSTGRES_PASSWORD: pulsepass
+          POSTGRES_DB: pulsedata
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U pulse"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13", cache: pip, cache-dependency-path: requirements.txt }
+      - run: pip install -r requirements.txt
+      - run: git ls-files '*.py' | xargs python -m py_compile
+      - name: Migrate scratch DB (schema owned by pulse repo)
+        env: { PGPASSWORD: pulsepass }
+        run: |
+          for f in 001_users 002_monitors 003_checks 004_incidents 005_next_run_at; do
+            curl -sSfL "https://raw.githubusercontent.com/RakhaYandra/pulse/main/backend/infrastructure/postgres/migrations/$f.sql" \
+              | psql -h 127.0.0.1 -p 5433 -U pulse -d pulsedata -q -f -
+          done
+      - name: Load fixture + run pipeline (cross-check skipped, no API in CI)
+        env:
+          PG_HOST: 127.0.0.1
+          PG_PORT: 5433
+          PG_USER: pulse
+          PG_PASS: pulsepass
+          PG_DB: pulsedata
+        run: |
+          psql -h 127.0.0.1 -p 5433 -U pulse -d pulsedata -q -f demo_data.sql
+          python run.py
+          test -f charts/uptime_by_monitor.png
+          test -f work/uptime_daily.parquet
