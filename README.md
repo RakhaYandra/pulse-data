@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/RakhaYandra/pulse-data/actions/workflows/ci.yml/badge.svg)](https://github.com/RakhaYandra/pulse-data/actions)
 
-> Ecosystem: [api](https://github.com/RakhaYandra/pulse) · [web](https://github.com/RakhaYandra/pulse-web) · [docs](https://github.com/RakhaYandra/pulse-docs/releases) · [data](https://github.com/RakhaYandra/pulse-data)
+> Ecosystem: [api](https://github.com/RakhaYandra/pulse) · [web](https://github.com/RakhaYandra/pulse-web) · [docs](https://github.com/RakhaYandra/pulse-docs/releases) · [data](https://github.com/RakhaYandra/pulse-data) · [qa](https://github.com/RakhaYandra/pulse-qa) · [ops](https://github.com/RakhaYandra/pulse-ops)
 
 Reliability analytics for the [Pulse](https://github.com/RakhaYandra/pulse)
 monitoring database — Python + pandas + DuckDB + matplotlib. No server, no deploy.
