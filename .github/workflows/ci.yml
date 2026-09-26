@@ -29,6 +29,7 @@ jobs:
           done
       - name: Load fixture + run pipeline (cross-check skipped, no API in CI)
         env:
+          PGPASSWORD: pulsepass
           PG_HOST: 127.0.0.1
           PG_PORT: 5433
           PG_USER: pulse
